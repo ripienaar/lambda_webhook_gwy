@@ -20,6 +20,9 @@ module.exports = {
     var result = {
       eventType: "simple_test",
       dimensions: {
+        test: "true"
+      },
+      properties: {
         event: JSON.stringify(event)
       }
     };
@@ -33,9 +36,11 @@ module.exports = {
       dimensions: {
         repository_name: event.repository.full_name,
         repository_ref: event.ref,
-        head_commit: event.head_commit.id,
         commits: event.commits.length.toString(),
-        author: event.pusher.name,
+        author: event.pusher.name
+      },
+      properties: {
+        head_commit: event.head_commit.id,
         url: event.compare_url
       }
     };
@@ -49,8 +54,10 @@ module.exports = {
       dimensions: {
         repository_name: event.repository.owner.username + "/" + event.repository.name,
         repository_ref: event.ref,
+        author: event.pusher.username
+      },
+      properties: {
         commits: event.commits.length.toString(),
-        author: event.pusher.username,
         url: event.compare_url
       }
     };
@@ -64,7 +71,9 @@ module.exports = {
       dimensions: {
         repository: event.repository,
         name: event.name,
-        namespace: event.namespace,
+        namespace: event.namespace
+      },
+      properties: {
         image_tags: Object.keys(event.updated_tags).join(", ")
       }
     };
