@@ -19,3 +19,7 @@ exports.handleGogsPushNotifications = function(event, context) {
 exports.handleQuayPushNotifications = function(event, context) {
   publish(signalfx.quayPushNotification(event), context);
 };
+
+exports.handleSimplePushNotifications = function(event, context) {
+  publish(signalfx.simplePushNotification(event), context);
+};

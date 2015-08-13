@@ -16,6 +16,17 @@ module.exports = {
     return req;
   },
 
+  simplePushNotification: function(event) {
+    var result = {
+      eventType: "simple_test",
+      dimensions: {
+        event: JSON.stringify(event)
+      }
+    };
+
+    return result;
+  },
+
   gitHubPushNotification: function(event) {
     var result = {
       eventType: "github_push",
