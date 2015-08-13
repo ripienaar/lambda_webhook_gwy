@@ -1,0 +1,8 @@
+module.exports = {
+  signalfx: {
+      token: "XXXX",
+      api_host: "api.signalfx.com",
+      api_path: "/v1/event",
+      api_port: 443
+  }
+}
