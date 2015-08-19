@@ -1,4 +1,13 @@
 module.exports = {
+  pushover: {
+    token: "XXXX",
+    user: "YYYY",
+    sound: "spacealarm",
+    api_host: "api.pushover.net",
+    api_path: "/1/messages.json",
+    api_port: 443
+  },
+
   signalfx: {
       token: "XXXX",
       api_host: "api.signalfx.com",

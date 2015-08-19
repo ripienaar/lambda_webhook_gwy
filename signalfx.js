@@ -1,4 +1,14 @@
-module.exports = {
+var self = module.exports = {
+  publish: function(handler, event, context, callback) {
+    var webhook = require("./webhook_request.js");
+    var config = require("./config.js");
+
+    var request = self.request(config.signalfx);
+    var data = self[handler](event, context)
+
+    webhook.publish(JSON.stringify(data), request, context, callback);
+  },
+
   request: function(config) {
     var https = require("https");
 
@@ -16,6 +26,46 @@ module.exports = {
     return req;
   },
 
+  // handles a event created from a puppet report handler like:
+  //
+  //   data = self.raw_summary
+  //   data["host"] = self.host
+  //   data["status"] = self.status
+  //   data["log_count"] = self.logs.size
+  puppetReport: function(event) {
+    var result = {
+      eventType: "puppet_report",
+      dimensions: {
+        host: event.host,
+        status: event.status,
+        log_messages: event.log_count.toString()
+      },
+      properties: {
+        puppet_version: event.version.puppet,
+        config_version: event.version.config,
+        success_events: event.events.success.toString(),
+        failure_events: event.events.failure.toString(),
+        runtime: event.time.total.toString(),
+        resource: event.resources.total.toString()
+      }
+    };
+
+    return result;
+  },
+
+  // {"hostname": "example.net"}
+  rebootPushNotification: function(event) {
+    var result = {
+      eventType: "reboot",
+      dimensions: {
+        host: event.hostname
+      }
+    };
+
+    return result;
+  },
+
+  // any JSON data
   simplePushNotification: function(event) {
     var result = {
       eventType: "simple_test",

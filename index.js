@@ -1,25 +1,45 @@
 var signalfx = require("./signalfx.js");
-var webhook = require("./webhook_request.js");
-var config = require("./config.js");
+var pushover = require("./pushover.js");
+var async = require("async");
 
-var publish = function(sfx_event, context) {
-  var sfx_request = signalfx.request(config.signalfx);
+var async_publish = function(handler, backends, event, context) {
+  var tasks = [];
 
-  webhook.publish(sfx_event, sfx_request, context);
-};
+  backends.forEach(function(backend) {
+    tasks.push(function(callback) {
+      backend.publish(handler, event, null, callback);
+    });
+  });
+
+  async.parallel(tasks, function(err, results) {
+    if (err) {
+      context.fail(err);
+    } else {
+      context.succeed("ok");
+    }
+  });
+}
+
+exports.handlePuppetReports = function(event, context) {
+  async_publish("puppetReport", [signalfx, pushover], event, context);
+}
+
+exports.handleRebootPushNotifications = function(event, context) {
+  async_publish("rebootPushNotification", [signalfx, pushover], event, context);
+}
 
 exports.handleGitHubPushNotifications = function(event, context) {
-  publish(signalfx.gitHubPushNotification(event), context);
+  signalfx.publish("gitHubPushNotification", event, context);
 }
 
 exports.handleGogsPushNotifications = function(event, context) {
-  publish(signalfx.gogsPushNotification(event), context);
+  signalfx.publish("gogsPushNotification", event, context);
 }
 
 exports.handleQuayPushNotifications = function(event, context) {
-  publish(signalfx.quayPushNotification(event), context);
+  async_publish("quayPushNotification", [signalfx, pushover], event, context);
 };
 
 exports.handleSimplePushNotifications = function(event, context) {
-  publish(signalfx.simplePushNotification(event), context);
+  signalfx.publish("simplePushNotification", event, context);
 };
