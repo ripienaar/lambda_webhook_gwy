@@ -20,6 +20,12 @@ var async_publish = function(handler, backends, event, context) {
   });
 }
 
+exports.handleJenkinsNotification = function(event, context) {
+  if (event.build.phase != "FINALIZED") {
+    signalfx.publish("jenkinsNotification", event, context);
+  }
+}
+
 exports.handlePuppetReports = function(event, context) {
   async_publish("puppetReport", [signalfx, pushover], event, context);
 }
@@ -37,7 +43,7 @@ exports.handleGogsPushNotifications = function(event, context) {
 }
 
 exports.handleQuayPushNotifications = function(event, context) {
-  async_publish("quayPushNotification", [signalfx, pushover], event, context);
+  signalfx.publish("quayPushNotification", event, context);
 };
 
 exports.handleSimplePushNotifications = function(event, context) {

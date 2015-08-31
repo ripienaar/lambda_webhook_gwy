@@ -26,6 +26,25 @@ var self = module.exports = {
     return req;
   },
 
+  // handles notifications from the Jenkins Notification Plugin
+  jenkinsNotification: function(event) {
+    var result = {
+      eventType: "jenkins_job",
+      dimensions: {
+        job: event.name,
+        phase: event.build.phase,
+        status: event.build.status,
+        branch: event.build.scm.branch
+      },
+      properties: {
+        job_number: event.build.number,
+        commit: event.build.scm.commit
+      }
+    };
+
+    return result;
+  },
+
   // handles a event created from a puppet report handler like:
   //
   //   data = self.raw_summary
