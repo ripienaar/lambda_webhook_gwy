@@ -8,6 +8,13 @@ module.exports = {
     api_port: 443
   },
 
+  graphite: {
+      token: "XXXXX",
+      api_host: "monitor1.example.net",
+      api_path: "/events/",
+      api_port: 443
+  },
+
   signalfx: {
       token: "XXXX",
       api_host: "api.signalfx.com",
